@@ -28,4 +28,4 @@ COPY . .
 RUN ./gradlew clean build -x test
 
 # Command to run the test cases using JUnit5
-CMD ["./gradlew", "test"]
+CMD ["./gradlew", "clean", "test", "--rerun-tasks"]

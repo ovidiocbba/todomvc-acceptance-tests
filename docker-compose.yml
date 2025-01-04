@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   webapp:
     build:
@@ -18,14 +16,14 @@ services:
 
   tests:
     build:
-      context: ./todomvc-acceptance-tests
+      context: .
     depends_on:
       webapp:
         condition: service_healthy
     networks:
       - test-network
     volumes:
-      - ./todomvc-acceptance-tests/target:/tests/target
+      - ./target:/app/target
     # Ensure the webapp service doesn't restart automatically
     environment:
       - APP_HOST_URL=http://webapp:7002
