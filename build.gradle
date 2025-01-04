@@ -23,3 +23,13 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+tasks.test {
+    // Show detailed test logging
+    testLogging {
+        events "PASSED", "FAILED", "SKIPPED"
+        exceptionFormat "full"
+        showStandardStreams = true
+    }
+}
+
