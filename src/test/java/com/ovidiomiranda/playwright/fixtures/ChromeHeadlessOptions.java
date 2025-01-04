@@ -10,7 +10,7 @@ public class ChromeHeadlessOptions implements OptionsFactory {
   @Override
   public Options getOptions() {
     return new Options().setLaunchOptions(new BrowserType.LaunchOptions().setArgs(
-            Arrays.asList("--no-sandbox", "--disable-extensions", "--disable-gpu"))).setHeadless(true)
+            Arrays.asList("--no-sandbox", "--disable-extensions", "--disable-gpu"))).setHeadless(false)
         .setTestIdAttribute("data-testid");
   }
 }
