@@ -2,7 +2,7 @@
 FROM openjdk:23-slim
 
 # Set the working directory inside the container
-WORKDIR /tests
+WORKDIR /app
 
 # Install dependencies required for Playwright
 RUN apt-get update && apt-get install -y \
