@@ -174,3 +174,60 @@ Ensure you're in the root directory of the ``todomvc-acceptance-tests`` project.
 gradle clean test
 ``` 
 ![Local Image](images/execute-tests-locally.png)
+
+## Running the Playwright Tests with Docker
+### 1. Go to directory(``todomvc-acceptance-tests``)
+```bash
+cd ..
+```
+
+### 2. Create a "Dockerfile"
+```dockerfile
+# Use OpenJDK 23 slim as the base image
+FROM openjdk:23-slim
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Install dependencies required for Playwright
+RUN apt-get update && apt-get install -y \
+    wget \
+    curl \
+    gnupg \
+    ca-certificates \
+    unzip \
+    && apt-get clean
+
+# Install Node.js and npm, playwright and compatible browsers
+RUN mkdir -p /usr/local/playwright && \
+    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs && \
+    npm install -g playwright && \
+    npx playwright install && \
+    npx playwright install-deps
+
+# Copy project files (assuming the Dockerfile is in the same directory as the project)
+COPY . .
+
+# Build the project using Gradle (skip tests during build)
+RUN ./gradlew clean build -x test
+
+# Command to run the test cases using JUnit5
+CMD ["./gradlew", "clean", "test", "--rerun-tasks"]
+```
+### 3. Build a Docker Image for Playwright Tests
+Creates a Docker image named ``playwright-tests`` containing all the dependencies, tools, and project files necessary to run Playwright tests.
+```bash
+docker build -t playwright-tests .
+```
+### 4. Run Playwright Tests in a Docker Container
+This command runs **a container** from the ``playwright-tests image`` and connects it to the ``host network`` for improved network access.
+```bash
+docker run --network host playwright-tests
+```
+![Local Image](images/run-tests-in-a-docker-container.png)
+**Note:**
+Before running the tests, ensure that the application (**todomvc-app**) is ``running locally`` so the Playwright tests can interact with it. You can start the application using the following command:  
+```bash
+docker run -p 7002:7002 todomvc-app
+```
