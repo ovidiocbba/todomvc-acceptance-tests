@@ -1,11 +1,11 @@
 # Table of contents
 
-- [Basic Docker Commands](#basic-docker-commands)
-- [Creating Your First Docker Image](#creating-your-first-docker-image)
-- [Running the TodoMVC application with Docker](#running-the-todomvc-application-with-docker)
-- [Running the Playwright Tests with Docker](#running-the-playwright-tests-with-docker)
+- [1. Basic Docker Commands](#1-basic-docker-commands)
+- [2. Creating Your First Docker Image](#2-creating-your-first-docker-image)
+- [3. Running the TodoMVC application with Docker](#3-running-the-todomvc-application-with-docker)
+- [4. Running the Playwright Tests with Docker](#4-running-the-playwright-tests-with-docker)
  
-## Basic Docker Commands
+## 1. Basic Docker Commands
 
 ### 1. Check Docker Version
 ```bash
@@ -61,7 +61,7 @@ docker pull nginx:1.24
 ```bash
 docker pull nginx:latest
 ```
-## Creating Your First Docker Image
+## 2. Creating Your First Docker Image
 ### 1. Go to directory
 ```bash
 cd docker-web-demo
@@ -130,7 +130,7 @@ This command removes a stopped Docker container from your system.
       <b><a href="#table-of-contents">↥ Back to top</a></b>
   </div>
 
-## Running the TodoMVC application with Docker
+## 3. Running the TodoMVC application with Docker
 ### 1. Go to directory
 ```bash
 cd ../react-todomvc
@@ -190,7 +190,7 @@ gradle clean test
       <b><a href="#table-of-contents">↥ Back to top</a></b>
   </div>
 
-## Running the Playwright Tests with Docker
+## 4. Running the Playwright Tests with Docker
 ### 1. Go to directory(``todomvc-acceptance-tests``)
 ```bash
 cd ..
