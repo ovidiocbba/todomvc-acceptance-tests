@@ -1,6 +1,6 @@
-Basic Docker Commands
+## Basic Docker Commands
 
-### Check Docker Version
+### 1. Check Docker Version
 ```bash
 docker --version
 ```
@@ -8,7 +8,7 @@ Output:
 ```
 Docker version 27.3.1, build ce12230
 ```
-### Run the Hello World Container
+### 2. Run the Hello World Container
 ```bash
 docker run hello-world
 ```
@@ -35,7 +35,7 @@ Share images, automate workflows, and more with a free Docker ID:
 For more examples and ideas, visit:
  https://docs.docker.com/get-started/
 ```
-### List Docker Images
+### 3. List Docker Images
 This command lists all Docker images available locally on your system.  
 Each image represents a snapshot that can be used to create containers
 ```bash
@@ -45,12 +45,132 @@ docker images
 REPOSITORY                        TAG       IMAGE ID       CREATED         SIZE
 hello-world                       latest    5b3cc85e16e3   20 months ago   24.4kB
 ```
-### Pull a Specific Docker Image Version
+### 4. Pull a Specific Docker Image Version
 Downloads the specified image from Docker Hub.
 ```bash
 docker pull nginx:1.24
 ```
-### Pull the Latest Docker Image
+### 5. Pull the Latest Docker Image
 ```bash
 docker pull nginx:latest
 ```
+## Creating Your First Docker Image
+### 1. Go to directory
+```bash
+cd docker-web-demo
+```
+### 2. Create a "Dockerfile"
+```dockerfile
+FROM nginx:latest
+COPY index.html /usr/share/nginx/html/index.html
+```
+The Dockerfile:
+   1. Uses ``nginx:latest`` as the base image, which comes with a pre-installed and configured ``Nginx server``.
+   2. This line copies a local file called ``index.html`` (which must be in the same directory as the Dockerfile) to the container.
+      The file is placed in the ``/usr/share/nginx/html/`` directory, which is the default location where ``Nginx`` looks for files to serve as web content.
+    ```dockerfile
+    COPY index.html /usr/share/nginx/html/index.html
+    ```
+### 3. Build the Docker Image  
+```bash
+docker build -t my-nginx-demo .
+```
+This command builds a Docker image from a Dockerfile located in the current directory (.).  
+**docker build:** This is the command used to build a Docker image.
+**-t my-nginx-demo**: The **-t** flag tags the image with a name (**my-nginx-demo**).  
+**.**: The period represents the current directory, where **Docker** _**will look for the Dockerfile**_ to build the image.
+
+### 4. Run the Docker Container
+```bash
+docker run -d -p 8080:80 --name web-demo my-nginx-demo
+```
+This command runs a Docker container based on the my-nginx-demo image with several specified options.  
+**docker run**: This is the command to ``run a Docker container`` from ``an image``.  
+**-d**: Detached mode (**runs the container in the background**).  
+**-p 8080:80**: **Maps port 8080 on your local machine** to port 80 inside the container.  
+**--name web-demo**: Assigns the name ``web-demo`` to the container.  
+**my-nginx-demo**: Specifies the ``image`` to use for the container.  
+
+### 5. Access the Web Page in Your Browser
+Open your web browser and visit:  
+```bash
+http://localhost:8080/
+```
+Visiting http://localhost:8080/ will display the custom web page being served by the ``Nginx container``, based on the ``index.html`` file **you added to the image**.
+![Local Image](images/web-demo.png)
+### 6.Stop a Running Docker Container
+```bash
+docker stop web-demo
+```
+This command is used to stop a running Docker container.  
+**docker stop**: This is the command to ``stop a running container``.  
+**web-demo**: The ``name of the container to stop``. In this case, it refers to the container that was started with the name web-demo.
+
+### 7. List Running Docker Containers
+```bash
+docker ps
+```
+This command shows a list of all currently running ``Docker containers``.
+**docker ps**: Lists the running containers on your system. By default, it **only shows containers that are actively running**.
+### 8. Remove a Stopped Docker Container
+```bash
+docker rm web-demo
+```
+This command removes a stopped Docker container from your system.  
+**docker rm**: This command removes one or more containers from your system.
+**web-demo**: The **name of the container to remove**, in this case, the ``web-demo container``.
+## Running the TodoMVC application with Docker
+### 1. Go to directory
+```bash
+cd ../react-todomvc
+```
+
+### 2. Create a "Dockerfile"
+```dockerfile
+# Uses the official Node.js image, version 16, as the base image.
+FROM node:16
+
+# Creates and sets "/app" as the directory where all subsequent commands will be executed.
+WORKDIR /app
+
+# Copies the package.json and package-lock.json files from the host machine to the current directory (./) in the container.
+COPY package*.json ./
+
+# Prepares the application environment by installing all necessary libraries and dependencies.
+RUN npm install
+
+# Copies all files and folders from the 'host machine's current' directory to the 'container's current directory' (/app).
+COPY . .
+
+# Declares that the container will use port 7002.
+EXPOSE 7002
+
+# Launches the application. This assumes the serve script is defined in the package.json file and typically starts the application server
+CMD ["npm", "run", "serve"]
+```
+### 3. Build a Docker Image
+Creates an image named ``todomvc-app``, which can be used to run containers.
+```bash
+docker build -t todomvc-app .
+```
+### 4. Run a Container with the Application
+This command starts a container based on the ``todomvc-app`` image and maps port ``7002`` from the container to port 7002 **on the host machine**.  
+```bash
+docker run -p 7002:7002 todomvc-app
+```
+### 5. Access the Web Page in Your Browser
+Open your web browser and visit:
+```bash
+http://localhost:7002/
+```
+Visiting http://localhost:7002/ will display the custom web page being served by the ``Nginx container``, based on the ``index.html`` file **you added to the image**.
+![Local Image](images/todomvc-app.png)
+
+### 6. Execute Tests Locally for the todomvc-acceptance-tests Project
+1. **Navigate to the Project Directory:**
+Ensure you're in the root directory of the ``todomvc-acceptance-tests`` project.
+2. **Execute the Tests:**  
+```bash
+gradle clean test
+``` 
+![Local Image](images/execute-tests-locally.png)
