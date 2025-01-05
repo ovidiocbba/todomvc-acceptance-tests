@@ -1,3 +1,10 @@
+# Table of contents
+
+- [Basic Docker Commands](#basic-docker-commands)
+- [Creating Your First Docker Image](#creating-your-first-docker-image)
+- [Running the TodoMVC application with Docker](#running-the-todomvc-application-with-docker)
+- [Running the Playwright Tests with Docker](#running-the-playwright-tests-with-docker)
+ 
 ## Basic Docker Commands
 
 ### 1. Check Docker Version
@@ -119,6 +126,10 @@ docker rm web-demo
 This command removes a stopped Docker container from your system.  
 **docker rm**: This command removes one or more containers from your system.
 **web-demo**: The **name of the container to remove**, in this case, the ``web-demo container``.
+  <div align="right">
+      <b><a href="#table-of-contents">↥ Back to top</a></b>
+  </div>
+
 ## Running the TodoMVC application with Docker
 ### 1. Go to directory
 ```bash
@@ -174,6 +185,10 @@ Ensure you're in the root directory of the ``todomvc-acceptance-tests`` project.
 gradle clean test
 ``` 
 ![Local Image](images/execute-tests-locally.png)
+
+  <div align="right">
+      <b><a href="#table-of-contents">↥ Back to top</a></b>
+  </div>
 
 ## Running the Playwright Tests with Docker
 ### 1. Go to directory(``todomvc-acceptance-tests``)
@@ -231,3 +246,6 @@ Before running the tests, ensure that the application (**todomvc-app**) is ``run
 ```bash
 docker run -p 7002:7002 todomvc-app
 ```
+  <div align="right">
+      <b><a href="#table-of-contents">↥ Back to top</a></b>
+  </div>
