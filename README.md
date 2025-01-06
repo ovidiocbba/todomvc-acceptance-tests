@@ -249,3 +249,81 @@ docker run -p 7002:7002 todomvc-app
   <div align="right">
       <b><a href="#table-of-contents">↥ Back to top</a></b>
   </div>
+
+## 5. Coordinating Docker Containers with Docker Compose
+### 0. Configuring the docker-compose.yml File
+The ``docker-compose.yml`` file defines **the services** and **their interactions**.  
+```dockerfile
+services:
+  webapp:
+    build:
+      context: ./react-todomvc  # Specifies the directory containing the Dockerfile for building the webapp service.
+    ports:
+      - "7002:7002"  # Maps port 7002 of the container to port 7002 on the host.
+    networks:
+      - test-network  # Attaches the service to a custom Docker network named "test-network".
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:7002" ]  # Runs a health check by sending a request to localhost:7002.
+      interval: 10s  # Specifies the interval between health checks.
+      timeout: 5s  # Sets the timeout for the health check command.
+      retries: 5  # The container is marked unhealthy after 5 failed checks.
+    restart: "no"  # Prevents the container from restarting automatically.
+
+  tests:
+    build:
+      context: .  # Specifies the current directory as the build context for the tests service.
+    depends_on:
+      webapp:
+        condition: service_healthy  # Ensures the tests service starts only when the webapp service is healthy.
+    networks:
+      - test-network  # Attaches the service to the same "test-network" as the webapp for communication.
+    volumes:
+      - ./target:/app/target  # Maps the local "target" directory to "/app/target" in the container.
+    environment:
+      - APP_HOST_URL=http://webapp:7002  # Sets the URL of the webapp service for the tests.
+    user: "${UID}:${GID}"  # Runs the container with the host's user and group IDs.
+    restart: "no"  # Prevents the container from restarting automatically.
+
+networks:
+  test-network:
+    driver: bridge  # Defines a custom bridge network for inter-service communication.
+```
+### 1. Building the Container Images
+```bash
+docker-compose build
+```
+This command builds the **Docker images** for **the services** defined in the ``docker-compose.yml`` file.   
+Specifically:  
+**webapp**: The image is built from the context ``./react-todomvc``, which likely contains a ``React project`` configured to **run on port 7002**.  
+**tests**: The image is built from the current directory ``.``, which likely contains **the environment** and **scripts for running automated tests**.
+
+### 2. Starting Services and Their Dependencies
+```bash
+docker-compose up
+```
+This command starts the services defined in the ``docker-compose.yml`` file and ensures proper dependency coordination.   
+Here's what happens:  
+
+**`webapp` service**:
+  * Exposes `port 7002` to **the host machine**.
+  * Includes a `healthcheck`, which sends a `curl` request to http://localhost:7002 to verify that the service is running correctly.
+  * The `tests` service will not start until the `webapp` is healthy, as defined by the `depends_on` condition.
+
+**`tests` service:**
+  * Depends on the `webapp` service and will only start when the `webapp` healthcheck passes.
+  * Likely executes tests against the webapp service using the environment variable `APP_HOST_URL=http://webapp:7002`.  
+
+### 3. Running Tests and Returning Results
+Execute automated tests and return the exit code of the tests container.  
+```bash
+docker-compose up --exit-code-from tests
+```
+### 4. Exporting Test Reports
+After running the tests, you can find the reports locally in the `./target` directory. These reports are useful for manual review or integration with tools that analyze test results.  
+
+The tests service uses the following volume configuration:
+```dockerfile
+volumes:
+  - ./target:/app/target
+```
+This means any files written to `/app/target` inside the tests container are synchronized with the `./target` directory **on the host machine**.  

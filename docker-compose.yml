@@ -1,35 +1,33 @@
 services:
   webapp:
     build:
-      context: ./react-todomvc
+      context: ./react-todomvc  # Specifies the directory containing the Dockerfile for building the webapp service.
     ports:
-      - "7002:7002"
+      - "7002:7002"  # Maps port 7002 of the container to port 7002 on the host.
     networks:
-      - test-network
+      - test-network  # Attaches the service to a custom Docker network named "test-network".
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:7002"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    # Ensure the webapp service doesn't restart automatically
-    restart: "no"
+      test: [ "CMD", "curl", "-f", "http://localhost:7002" ]  # Runs a health check by sending a request to localhost:7002.
+      interval: 10s  # Specifies the interval between health checks.
+      timeout: 5s  # Sets the timeout for the health check command.
+      retries: 5  # The container is marked unhealthy after 5 failed checks.
+    restart: "no"  # Prevents the container from restarting automatically.
 
   tests:
     build:
-      context: .
+      context: .  # Specifies the current directory as the build context for the tests service.
     depends_on:
       webapp:
-        condition: service_healthy
+        condition: service_healthy  # Ensures the tests service starts only when the webapp service is healthy.
     networks:
-      - test-network
+      - test-network  # Attaches the service to the same "test-network" as the webapp for communication.
     volumes:
-      - ./target:/app/target
-    # Ensure the webapp service doesn't restart automatically
+      - ./target:/app/target  # Maps the local "target" directory to "/app/target" in the container.
     environment:
-      - APP_HOST_URL=http://webapp:7002
-    user: "${UID}:${GID}"
-    restart: "no"
+      - APP_HOST_URL=http://webapp:7002  # Sets the URL of the webapp service for the tests.
+    user: "${UID}:${GID}"  # Runs the container with the host's user and group IDs.
+    restart: "no"  # Prevents the container from restarting automatically.
 
 networks:
   test-network:
-    driver: bridge
+    driver: bridge  # Defines a custom bridge network for inter-service communication.
