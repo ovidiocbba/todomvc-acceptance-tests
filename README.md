@@ -84,19 +84,26 @@ The Dockerfile:
 docker build -t my-nginx-demo .
 ```
 This command builds a Docker image from a Dockerfile located in the current directory (.).  
-**docker build:** This is the command used to build a Docker image.
-**-t my-nginx-demo**: The **-t** flag tags the image with a name (**my-nginx-demo**).  
-**.**: The period represents the current directory, where **Docker** _**will look for the Dockerfile**_ to build the image.
+
+**docker build:** This is the command used to build a Docker image.  
+
+**-t my-nginx-demo**: The **-t** flag tags the image with a name (**my-nginx-demo**).    
+
+**.**: The period represents the current directory, where **Docker** _**will look for the Dockerfile**_ to build the image.  
 
 ### 4. Run the Docker Container
 ```bash
 docker run -d -p 8080:80 --name web-demo my-nginx-demo
 ```
 This command runs a Docker container based on the my-nginx-demo image with several specified options.  
-**docker run**: This is the command to ``run a Docker container`` from ``an image``.  
+**docker run**: This is the command to ``run a Docker container`` from ``an image``.    
+
 **-d**: Detached mode (**runs the container in the background**).  
-**-p 8080:80**: **Maps port 8080 on your local machine** to port 80 inside the container.  
+
+**-p 8080:80**: **Maps port 8080 on your local machine** to port 80 inside the container.    
+
 **--name web-demo**: Assigns the name ``web-demo`` to the container.  
+
 **my-nginx-demo**: Specifies the ``image`` to use for the container.  
 
 ### 5. Access the Web Page in Your Browser
@@ -124,9 +131,9 @@ This command shows a list of all currently running ``Docker containers``.
 ```bash
 docker rm web-demo
 ```
-This command removes a stopped Docker container from your system.  
-**docker rm**: This command removes one or more containers from your system.
-**web-demo**: The **name of the container to remove**, in this case, the ``web-demo container``.
+This command removes a stopped Docker container from your system.    
+**docker rm**: This command removes one or more containers from your system.  
+**web-demo**: The **name of the container to remove**, in this case, the ``web-demo container``.  
   <div align="right">
       <b><a href="#table-of-contents">↥ Back to top</a></b>
   </div>
@@ -187,9 +194,9 @@ gradle clean test
 ``` 
 ![Local Image](images/execute-tests-locally.png)
 
-  <div align="right">
-      <b><a href="#table-of-contents">↥ Back to top</a></b>
-  </div>
+<div align="right">
+   <b><a href="#table-of-contents">↥ Back to top</a></b>
+</div>
 
 ## 4. Running the Playwright Tests with Docker
 ### 1. Go to directory(``todomvc-acceptance-tests``)
