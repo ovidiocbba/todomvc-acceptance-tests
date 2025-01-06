@@ -4,6 +4,7 @@
 - [2. Creating Your First Docker Image](#2-creating-your-first-docker-image)
 - [3. Running the TodoMVC application with Docker](#3-running-the-todomvc-application-with-docker)
 - [4. Running the Playwright Tests with Docker](#4-running-the-playwright-tests-with-docker)
+- [5. Coordinating Docker Containers with Docker Compose](#5-coordinating-docker-containers-with-docker-compose)
  
 ## 1. Basic Docker Commands
 
@@ -293,17 +294,20 @@ networks:
 docker-compose build
 ```
 This command builds the **Docker images** for **the services** defined in the ``docker-compose.yml`` file.   
-Specifically:  
-**webapp**: The image is built from the context ``./react-todomvc``, which likely contains a ``React project`` configured to **run on port 7002**.  
-**tests**: The image is built from the current directory ``.``, which likely contains **the environment** and **scripts for running automated tests**.
+Specifically:   
 
-### 2. Starting Services and Their Dependencies
+**webapp**: The image is built from the context ``./react-todomvc``, which likely contains a ``React project`` configured to **run on port 7002**.    
+
+**tests**: The image is built from the current directory ``.``, which likely contains **the environment** and **scripts for running automated tests**.  
+
+### 2. Starting Services and Running Tests
+This step involves **starting the services** defined in the `docker-compose.yml` file, **coordinating their dependencies, and executing automated tests**.  
+The command to use is:  
 ```bash
-docker-compose up
+docker-compose up --exit-code-from tests
 ```
-This command starts the services defined in the ``docker-compose.yml`` file and ensures proper dependency coordination.   
-Here's what happens:  
 
+Here's what happens:  
 **`webapp` service**:
   * Exposes `port 7002` to **the host machine**.
   * Includes a `healthcheck`, which sends a `curl` request to http://localhost:7002 to verify that the service is running correctly.
@@ -311,14 +315,17 @@ Here's what happens:
 
 **`tests` service:**
   * Depends on the `webapp` service and will only start when the `webapp` healthcheck passes.
-  * Likely executes tests against the webapp service using the environment variable `APP_HOST_URL=http://webapp:7002`.  
+  * Likely executes tests against the webapp service using the environment variable `APP_HOST_URL=http://webapp:7002`.    
 
-### 3. Running Tests and Returning Results
-Execute automated tests and return the exit code of the tests container.  
-```bash
-docker-compose up --exit-code-from tests
-```
-### 4. Exporting Test Reports
+**Returns an `exit code` based on the result of the tests:**
+  * A `non-zero exit code` indicates **test failures**.
+  * A `zero exit code` indicates all tests passed successfully.  
+
+This command ensures that services are started in the correct order, tests are executed, and the overall process concludes with a status code reflecting the test results.
+
+![Local Image](images/coordinating-docker-containers-with-docker-compose.png)
+
+### 3. Exporting Test Reports
 After running the tests, you can find the reports locally in the `./target` directory. These reports are useful for manual review or integration with tools that analyze test results.  
 
 The tests service uses the following volume configuration:
@@ -327,3 +334,6 @@ volumes:
   - ./target:/app/target
 ```
 This means any files written to `/app/target` inside the tests container are synchronized with the `./target` directory **on the host machine**.  
+<div align="right">
+   <b><a href="#table-of-contents">↥ Back to top</a></b>
+</div>
